@@ -1,16 +1,26 @@
-Submission-hardening experiment for paper 62 energy_transformer_action_selection
-Seven seeds, 600 episodes per seed, strong baselines, ablations, stress sweep, and negative cases.
-observed_only_behavior_clone hidden_mode_shift mean_success=0.4088 ci95=0.0178 tail=0.5912
-observed_only_behavior_clone combined_stress mean_success=0.3259 ci95=0.0102 tail=0.6741
-data_augmentation_wam hidden_mode_shift mean_success=0.4824 ci95=0.0145 tail=0.5176
-data_augmentation_wam combined_stress mean_success=0.4259 ci95=0.0147 tail=0.5741
-scalar_uncertainty_planner hidden_mode_shift mean_success=0.5678 ci95=0.0159 tail=0.4322
-scalar_uncertainty_planner combined_stress mean_success=0.5017 ci95=0.0132 tail=0.4983
-ensemble_disagreement_planner hidden_mode_shift mean_success=0.5909 ci95=0.0045 tail=0.4091
-ensemble_disagreement_planner combined_stress mean_success=0.5500 ci95=0.0141 tail=0.4500
-conformal_risk_filter hidden_mode_shift mean_success=0.5983 ci95=0.0174 tail=0.4017
-conformal_risk_filter combined_stress mean_success=0.5610 ci95=0.0086 tail=0.4390
-proposed_branch_mechanism hidden_mode_shift mean_success=0.6871 ci95=0.0096 tail=0.3129
-proposed_branch_mechanism combined_stress mean_success=0.6526 ci95=0.0096 tail=0.3474
-oracle_branch_upper_bound hidden_mode_shift mean_success=0.7648 ci95=0.0094 tail=0.2352
-oracle_branch_upper_bound combined_stress mean_success=0.7536 ci95=0.0090 tail=0.2464
+Real MuJoCo/PyTorch energy action-selection benchmark for paper 62
+train_tasks=360 seeds=5 episodes=16 splits=nominal,low_friction,high_friction,heavy_object,obstacle_shift,combined_shift
+combined_shift mlp_energy_scorer success=0.425+/-0.109 regret=0.027+/-0.013 violation=0.037
+combined_shift oracle_mujoco_rollout_selector success=0.475+/-0.110 regret=0.000+/-0.000 violation=0.013
+combined_shift robust_worst_case_mpc success=0.412+/-0.109 regret=0.027+/-0.014 violation=0.037
+combined_shift transformer_energy_scorer success=0.412+/-0.109 regret=0.033+/-0.015 violation=0.075
+heavy_object mlp_energy_scorer success=0.100+/-0.066 regret=0.014+/-0.009 violation=0.025
+heavy_object oracle_mujoco_rollout_selector success=0.175+/-0.084 regret=0.000+/-0.000 violation=0.000
+heavy_object robust_worst_case_mpc success=0.138+/-0.076 regret=0.008+/-0.007 violation=0.013
+heavy_object transformer_energy_scorer success=0.125+/-0.073 regret=0.012+/-0.010 violation=0.037
+high_friction mlp_energy_scorer success=0.163+/-0.081 regret=0.017+/-0.009 violation=0.025
+high_friction oracle_mujoco_rollout_selector success=0.275+/-0.098 regret=0.000+/-0.000 violation=0.000
+high_friction robust_worst_case_mpc success=0.225+/-0.092 regret=0.025+/-0.014 violation=0.062
+high_friction transformer_energy_scorer success=0.212+/-0.090 regret=0.026+/-0.015 violation=0.075
+low_friction mlp_energy_scorer success=0.050+/-0.048 regret=0.018+/-0.010 violation=0.050
+low_friction oracle_mujoco_rollout_selector success=0.075+/-0.058 regret=0.000+/-0.000 violation=0.000
+low_friction robust_worst_case_mpc success=0.075+/-0.058 regret=0.012+/-0.009 violation=0.025
+low_friction transformer_energy_scorer success=0.062+/-0.053 regret=0.020+/-0.012 violation=0.075
+nominal mlp_energy_scorer success=0.175+/-0.084 regret=0.022+/-0.010 violation=0.025
+nominal oracle_mujoco_rollout_selector success=0.263+/-0.097 regret=0.000+/-0.000 violation=0.000
+nominal robust_worst_case_mpc success=0.200+/-0.088 regret=0.017+/-0.009 violation=0.013
+nominal transformer_energy_scorer success=0.188+/-0.086 regret=0.016+/-0.009 violation=0.025
+obstacle_shift mlp_energy_scorer success=0.463+/-0.110 regret=0.003+/-0.002 violation=0.000
+obstacle_shift oracle_mujoco_rollout_selector success=0.500+/-0.110 regret=0.000+/-0.000 violation=0.000
+obstacle_shift robust_worst_case_mpc success=0.463+/-0.110 regret=0.005+/-0.004 violation=0.000
+obstacle_shift transformer_energy_scorer success=0.463+/-0.110 regret=0.007+/-0.009 violation=0.013

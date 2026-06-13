@@ -1,11 +1,13 @@
 # Submission Readiness Decision
 
-Decision: KILL_ARCHIVE
+Decision: STRONG_REVISE.
 
 ICLR main-conference readiness: NO.
 
-Reason: The strongest locally available evidence is synthetic and template-generated. The paper lacks real-robot or high-fidelity simulator validation, implemented learned baselines, manual full-paper related-work depth, and paper-specific empirical figures. These are not recoverable without new external experiments or a substantially new research project.
+Submission-hardening version: v4 real MuJoCo/PyTorch rebuild.
 
-Honest terminal action: archive/kill for ICLR main. Do not submit this paper to ICLR main in its current form.
+Reason: the paper now has real MuJoCo rollout labels, a trained PyTorch energy scorer, implemented baselines, ablations, stress tests, and uncertainty summaries. However, the transformer energy scorer does not consistently outperform MLP energy, nominal rollout MPC, or robust worst-case MPC. The self-attention mechanism is not isolated as necessary, and no hardware/public-benchmark evidence exists.
 
-Revival condition: rebuild as a real empirical robotics paper with implemented model, strong real baselines, manual related work, and deployment evidence.
+Honest terminal action: do not submit to ICLR main in this form. Keep as a strong-revise empirical scaffold.
+
+Revival condition: show statistically clear gains over MLP/robust MPC, reduce violation rate, add external benchmarks or hardware, and perform manual robotics related-work synthesis.

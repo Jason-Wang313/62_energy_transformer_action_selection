@@ -1,4 +1,8 @@
 __pycache__/
+results/*.partial.csv
+results/full_run_*.log
+results/energy_train_*.npy
+results/energy_feature_*.npy
 *.aux
 *.bbl
 *.blg

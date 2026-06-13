@@ -4,42 +4,110 @@
 \usepackage{hyperref}
 \usepackage{url}
 \usepackage{booktabs}
-\title{Energy Transformer Action Selection: ICLR Main-Conference Gate Archive}
+\usepackage{graphicx}
+
+\title{Energy Transformer Action Selection for Contact-Rich MuJoCo Pushing}
 \author{Anonymous Authors}
+
 \begin{document}
 \maketitle
+
 \begin{abstract}
-This document is not an ICLR main-conference submission. It is the v3 main-conference gate for a generated robotics draft about energy-based transformer robot policies. The original research bet was: Replace next-action decoding with energy-ranked feasible action manifolds. After a stricter hostile review, the honest terminal decision is \textbf{KILL/ARCHIVE}. Submission-hardening version: v3.
+Many robot policies decode a single next action even when several physically feasible actions remain plausible. This paper rebuilds Energy Transformer Action Selection as a real MuJoCo/PyTorch evidence package: MuJoCo rollouts label candidate push-action sets, a lightweight set-transformer energy scorer ranks feasible actions, and the learned selector is compared against random, geometric, nominal MPC, robust MPC, MLP energy, and oracle rollout baselines. The result is useful but not ICLR-main ready. The transformer energy scorer beats random and geometric selection, but it does not consistently beat MLP energy or robust/nominal MPC, and ablations do not isolate self-attention as the decisive component. The honest terminal decision is \textbf{STRONG\_REVISE}. Submission-hardening version: v4.
 \end{abstract}
 
+\section{Motivation}
+The original research bet was to replace next-action decoding with energy-ranked feasible action manifolds. A strong version of this idea would show that action-set context, feasibility penalties, and energy ranking improve physical action selection under dynamics and obstacle shifts. The v3 paper could not make that claim because its evidence was synthetic. The v4 rebuild turns the idea into a real MuJoCo/PyTorch benchmark and then gates the claim on the resulting evidence.
+
+\section{Benchmark and Method}
+We use a planar MuJoCo contact-pushing task. A controlled pusher moves a cylindrical puck toward a target while avoiding an obstacle. Hidden physical parameters include object mass, surface friction, obstacle placement, and actuation noise. Each state generates a fixed set of candidate push primitives.
+
+\paragraph{Training labels.}
+MuJoCo rollouts label 360 training action sets. Each candidate receives an energy composed of final distance, effort, and obstacle/contact violation. Candidate tokens include action geometry, target geometry, obstacle geometry, and nominal MuJoCo rollout features.
+
+\paragraph{Proposed selector.}
+The proposed model is a small set transformer over candidate action tokens. It outputs one scalar energy per candidate and chooses the lowest-energy action. The loss combines energy regression with a ranking term that encourages the best MuJoCo-labeled candidate to receive low energy.
+
+\paragraph{Baselines.}
+We compare against random candidate selection, geometric greedy selection, nominal rollout MPC, robust worst-case MPC over mass/friction branches, an MLP energy scorer with the same token features, and an oracle MuJoCo rollout selector.
+
+\paragraph{Evaluation.}
+The main run uses 5 seeds, 16 episodes per seed/split/method, and six splits: nominal, low friction, high friction, heavy object, obstacle shift, and combined shift. We report success, final distance, violation rate, and energy regret versus oracle with 95 percent confidence intervals.
+
+\section{Main Results}
+Table~\ref{tab:main} reports success rates. The transformer is much better than random and geometric selection, but it does not establish the claimed contribution. MLP energy is equal or better on combined and obstacle shifts; robust or nominal MPC is better on several dynamics shifts.
+
+\begin{table}[t]
+\centering
+\caption{Success rate by stress split. Each entry is mean $\pm$ 95 percent CI over 80 episodes.}
+\label{tab:main}
+\small
+\begin{tabular}{lccccc}
+\toprule
+Split & Transformer & MLP & Robust MPC & Nominal MPC & Oracle \\
+\midrule
+Nominal & $0.188 \pm 0.086$ & $0.175 \pm 0.084$ & $0.200 \pm 0.088$ & $0.237 \pm 0.094$ & $0.263 \pm 0.097$ \\
+Low friction & $0.062 \pm 0.053$ & $0.050 \pm 0.048$ & $0.075 \pm 0.058$ & $0.075 \pm 0.058$ & $0.075 \pm 0.058$ \\
+High friction & $0.212 \pm 0.090$ & $0.163 \pm 0.081$ & $0.225 \pm 0.092$ & $0.237 \pm 0.094$ & $0.275 \pm 0.099$ \\
+Heavy object & $0.125 \pm 0.073$ & $0.100 \pm 0.066$ & $0.138 \pm 0.076$ & $0.138 \pm 0.076$ & $0.175 \pm 0.084$ \\
+Obstacle shift & $0.463 \pm 0.110$ & $0.463 \pm 0.110$ & $0.463 \pm 0.110$ & $0.488 \pm 0.110$ & $0.500 \pm 0.110$ \\
+Combined shift & $0.413 \pm 0.109$ & $0.425 \pm 0.109$ & $0.413 \pm 0.109$ & $0.413 \pm 0.109$ & $0.475 \pm 0.110$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../figures/energy_success_by_split.png}
+\caption{Success rate across stress splits. The transformer is useful relative to weak selectors, but it does not clearly separate from MLP energy or MPC baselines.}
+\label{fig:success}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../figures/energy_regret_by_split.png}
+\caption{Energy regret versus the oracle MuJoCo rollout selector. Lower is better. The transformer is near strong baselines but not consistently better.}
+\label{fig:regret}
+\end{figure}
+
+\section{Paired Comparisons}
+Paired deltas confirm the aggregate picture. Transformer energy improves over geometric greedy on every split, with large success gains on obstacle shift (+0.450) and combined shift (+0.363). Against MLP energy, the gains are small or negative: combined shift is -0.013 success and obstacle shift is tied. Against robust MPC, transformer is tied on combined and obstacle shifts, loses on nominal, low friction, high friction, and heavy object, and often has a higher violation rate.
+
+This is not a failed implementation; it is a useful falsification. Energy ranking is helpful, but the set-transformer mechanism is not yet justified as the key contribution.
+
+\section{Ablations}
+Table~\ref{tab:ablation} reports combined-shift ablations. MLP energy and the small-data transformer match or slightly exceed the full transformer on success and regret. Removing feasibility reduces apparent final distance but increases violation rate to 0.300, showing that feasibility must remain explicit. The top-3 geometric filter performs poorly, indicating that energy ranking should not be applied only after a narrow geometric prefilter.
+
+\begin{table}[t]
+\centering
+\caption{Combined-shift ablation results. Lower regret is better.}
+\label{tab:ablation}
+\small
+\begin{tabular}{lccc}
+\toprule
+Method & Success & Violation & Energy regret \\
+\midrule
+Transformer energy & $0.413 \pm 0.109$ & $0.075 \pm 0.058$ & $0.0326 \pm 0.0154$ \\
+MLP energy & $0.425 \pm 0.109$ & $0.037 \pm 0.042$ & $0.0269 \pm 0.0129$ \\
+Small-data transformer & $0.425 \pm 0.109$ & $0.037 \pm 0.042$ & $0.0257 \pm 0.0111$ \\
+No obstacle features & $0.413 \pm 0.109$ & $0.150 \pm 0.079$ & $0.0437 \pm 0.0184$ \\
+No feasibility objective & $0.413 \pm 0.109$ & $0.300 \pm 0.101$ & $0.0705 \pm 0.0244$ \\
+Top-3 geometric filter & $0.175 \pm 0.084$ & $0.013 \pm 0.024$ & $0.0927 \pm 0.0198$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\linewidth]{../figures/energy_ablation_regret.png}
+\caption{Combined-shift ablation energy regret. The full transformer is not uniquely best, so the transformer mechanism remains under-validated.}
+\label{fig:ablation}
+\end{figure}
+
+\section{Limitations}
+The benchmark is custom MuJoCo rather than hardware or a public manipulation benchmark. The transformer is intentionally lightweight and trained on compact tabular rollout labels, not images or large robot datasets. Related-work retrieval for this paper was noisy, often returning non-robotics transformer/energy papers, so a manual robotics prior-work synthesis is still required. Most importantly, the core claim is not validated: self-attention over action candidates does not yet produce a clear advantage over an MLP with the same features or robust MPC.
+
 \section{Gate Decision}
-The v2 paper was workshop-only. Under the active ICLR-main standard, that is insufficient. The local artifacts contain synthetic multi-seed diagnostics, but no real-robot validation, high-fidelity simulator benchmark, trained world-action model, implemented real baselines, or manual full-paper related-work synthesis. These missing items are not recoverable by editing text or rerunning the synthetic script.
-
-\section{Fatal ICLR-Main Blockers}
-\begin{itemize}
-\item Evidence is synthetic and generated from a shared batch template.
-\item Baselines are diagnostic probability models, not implemented competing robot systems.
-\item Ablations do not correspond to a trained model checkpoint.
-\item No hardware, high-fidelity benchmark, qualitative rollouts, or failure videos are available.
-\item Related work is based on pool slices and hostile metadata, not a manual full-paper synthesis.
-\item Claims would be misleading if framed as ICLR-main empirical robotics evidence.
-\end{itemize}
-
-\section{Hostile Prior-Work Pressure}
-The closest local hostile records include:
-\begin{itemize}
-\item Natural Language Processing for Chest X-Ray Reports in the Transformer Era: BERT-Like Encoders for Comprehension and GPT-Like Decoders for Generation (2025)
-\item A GAN-and-Transformer-Assisted Scheduling Approach for Hydrogen-Based Multi-Energy Microgrid (2025)
-\item Energy Efficient UAV Flight Path Model for Cluster Head Selection in Next-Generation Wireless Sensor Networks (2021)
-\item Segmentation Model Benchmarking: A Strategic Prerequisite for Robust Geospatial Foundation Models (n.d.)
-\item Sampling-Based Planning and Predictive Control for Energy Management of a Shipboard Integrated Power System With High Ramp Rate Load (2026)
-\end{itemize}
-These works make generic world models, uncertainty, model-based planning, and robot policy robustness crowded. Without real empirical evidence, the remaining novelty boundary is too weak for ICLR main.
-
-\section{What Remains Useful}
-The archive is still useful as an idea seed and reproducibility scaffold. The synthetic code, stress-test CSVs, reviewer attacks, and novelty-boundary docs can inform a future project. The correct next step is not more paper polishing; it is new evidence: implemented models, real baselines, manual related work, and robot or high-fidelity simulator validation.
-
-\section{Terminal Action}
-Decision: \textbf{KILL/ARCHIVE for ICLR main}. Do not submit this paper to ICLR main in the current form. Revival requires a substantially new empirical project.
+The terminal decision is \textbf{STRONG\_REVISE}. The paper is no longer a synthetic archive: it has real MuJoCo data, a trained model, baselines, ablations, paired statistics, and figures. It is not ICLR-main ready because the transformer mechanism fails the decisive-baseline test.
 
 \end{document}
