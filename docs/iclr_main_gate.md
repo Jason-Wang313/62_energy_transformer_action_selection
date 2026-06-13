@@ -2,18 +2,19 @@
 
 Paper: 62 energy_transformer_action_selection
 
-Existing v2 decision: KILL_ARCHIVE
+Previous v3 decision: KILL_ARCHIVE.
 
-Gate verdict: KILL_ARCHIVE
+v4 gate verdict: STRONG_REVISE.
 
-Evidence digest: 23f1d25f1e6352dc
+ICLR main ready: no.
 
-Fatal blockers:
-- Synthetic-only evidence.
-- Template-generated experiment and writing.
-- No real robot or high-fidelity benchmark.
-- No trained WAM/model checkpoint.
-- No implemented real baselines.
-- No manual exhaustive related-work synthesis.
+Evidence digest: real MuJoCo/PyTorch action-selection benchmark with 360 MuJoCo training tasks, 5 seeds, 6 stress splits, 7 main methods, ablations, confidence intervals, and figures.
 
-The only honest main-conference-safe decision is to archive rather than overclaim.
+Remaining blockers:
+- Transformer energy scorer does not clearly beat MLP energy.
+- Transformer energy scorer does not consistently beat nominal rollout MPC or robust worst-case MPC.
+- Violation rate is higher than robust MPC on several splits.
+- No hardware or external public benchmark.
+- Related-work retrieval is noisy and requires manual robotics synthesis.
+
+The only honest main-conference-safe decision is STRONG_REVISE, not submission ready.
