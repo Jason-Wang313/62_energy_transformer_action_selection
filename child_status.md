@@ -8,4 +8,4 @@ Submission-hardening version: v5
 Terminal decision: STRONG_REVISE
 ICLR main ready: no
 
-Reason: the v5 rebuild passed code, frozen-run, PDF, citation, row-count, and artifact-location gates. It produced a real 25-page ICLR-style manuscript and a much stronger MuJoCo/PyTorch benchmark, but RC-RET does not clear the success gate against MLP, Deep Sets, robust MPC, or the oracle. The honest terminal state is STRONG_REVISE.
+Reason: the v5 rebuild passed code, frozen-run, PDF, citation, row-count, artifact-location, and VLA-v4 green/red link-box styling gates. It produced a real 25-page ICLR-style manuscript and a much stronger MuJoCo/PyTorch benchmark, but RC-RET does not clear the success gate against MLP, Deep Sets, robust MPC, or the oracle. The honest terminal state is STRONG_REVISE.
