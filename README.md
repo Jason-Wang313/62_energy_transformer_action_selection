@@ -4,7 +4,7 @@ Submission-hardening version: v5 frozen RC-RET rebuild.
 
 Terminal decision: STRONG_REVISE for ICLR main conference.
 
-This repository contains a CPU-only MuJoCo/PyTorch action-set selection benchmark for contact-rich pushing. The v5 rebuild expands the older energy-transformer scaffold into a risk-calibrated relational energy transformer (RC-RET), stronger baselines, ten stress splits, full ablations, formal theory, and a 25-page ICLR-style manuscript with bright boxed clickable citations.
+This repository contains a CPU-only MuJoCo/PyTorch action-set selection benchmark for contact-rich pushing. The v5 rebuild expands the older energy-transformer scaffold into a risk-calibrated relational energy transformer (RC-RET), stronger baselines, ten stress splits, full ablations, formal theory, and a 25-page ICLR-style manuscript with VLA-v4-matched green/red boxed clickable links.
 
 The result is honest: RC-RET is safer than several unshielded learned baselines and close to robust/CVaR branch scoring, but it does not clear the success gate against MLP, Deep Sets, robust MPC, or the oracle. Terminal state remains STRONG_REVISE, not ICLR-main-ready.
 
