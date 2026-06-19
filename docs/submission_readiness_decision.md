@@ -4,10 +4,10 @@ Decision: STRONG_REVISE.
 
 ICLR main-conference readiness: NO.
 
-Submission-hardening version: v4 real MuJoCo/PyTorch rebuild.
+Submission-hardening version: v5 frozen RC-RET rebuild.
 
-Reason: the paper now has real MuJoCo rollout labels, a trained PyTorch energy scorer, implemented baselines, ablations, stress tests, and uncertainty summaries. However, the transformer energy scorer does not consistently outperform MLP energy, nominal rollout MPC, or robust worst-case MPC. The self-attention mechanism is not isolated as necessary, and no hardware/public-benchmark evidence exists.
+Reason: the paper now has a real 25-page ICLR-style manuscript, formal theory, manual primary-source bibliography, bright boxed clickable citations, a CPU-only MuJoCo/PyTorch frozen benchmark, stronger baselines, ten stress splits, 11,520 main rows, 2,112 ablation rows, paired statistics, stress figures, and reproducibility scripts. However, RC-RET does not clear the success gate against MLP, Deep Sets, robust MPC, nominal MPC, or the oracle. Ablations support risk and feasibility but do not isolate attention as decisive.
 
-Honest terminal action: do not submit to ICLR main in this form. Keep as a strong-revise empirical scaffold.
+Honest terminal action: do not submit to ICLR main in this form. Preserve as a rigorous strong-revise evidence package.
 
-Revival condition: show statistically clear gains over MLP/robust MPC, reduce violation rate, add external benchmarks or hardware, and perform manual robotics related-work synthesis.
+Revival condition: add richer primitive generation, online latent/contact inference, public benchmark or hardware validation, and a decisive win over shielded MLP, Deep Sets, and robust MPC without increasing violations.

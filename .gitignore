@@ -3,6 +3,9 @@ results/*.partial.csv
 results/full_run_*.log
 results/energy_train_*.npy
 results/energy_feature_*.npy
+results/dev_smoke*/
+figures/dev_smoke*/
+logs/
 *.aux
 *.bbl
 *.blg
